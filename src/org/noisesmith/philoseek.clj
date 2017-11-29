@@ -19,9 +19,15 @@
                            (not (string/starts-with? uri "/wiki/Wikipedia:"))))))))
 
 (defn extract-link
-  "finds the next link to follow from the body"
-  [body]
-  body)
+  "function that exists for exploring our data in the repl"
+   [body]
+    (-> body
+        (->> (tree-seq coll? seq)
+             (sequence (comp (find-tag :a)
+                             find-wiki)))
+        first
+        (:attrs)
+        (:href)))
 
 (defn raw-search
   "Tries to find the Philosophy page on wikipedia in a roundabout manner."
@@ -29,17 +35,4 @@
   ([url]
    (-> url
        (x/parse)
-       #_ (doto (p/dump "parsed-wiki-data"))
        (extract-link))))
-
-
-(def basic-dump-file "test/data/parsed-wiki-data.transit.json")
-
-(defn explore-links
-  "function that exists for exploring our data in the repl"
-   [n]
-    (-> (p/restore basic-dump-file)
-        (->> (tree-seq coll? seq)
-             (sequence (comp (find-tag :a)
-                             find-wiki)))
-        (nth n)))

@@ -1,6 +1,13 @@
 # Change Log
 This file doubles as a walk through of a presentation.
 
+## 0.1.3
+### Fixed
+- raw-search now finds a link we can follow (for our example input)
+
+### Added
+- separate extract-link function to get the data from representative input
+
 ## 0.1.2
 ### Added
 - extract-link function to isolate pure data processing from IO
