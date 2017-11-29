@@ -5,4 +5,4 @@
 
 (deftest search-test
   (testing "basic functionality"
-    (is (string? (raw-search)))))
+    (is (string? (extract-link (p/restore "parsed-wiki-data.transit.json"))))))
