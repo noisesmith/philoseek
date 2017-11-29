@@ -5,4 +5,4 @@
 
 (deftest search-test
   (testing "basic functionality"
-    (is (coll? (raw-search)))))
+    (is (string? (raw-search)))))

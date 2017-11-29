@@ -1,6 +1,11 @@
 # Change Log
 This file doubles as a walk through of a presentation.
 
+## 0.1.2
+### Added
+- extract-link function to isolate pure data processing from IO
+- updated test to reflect our expectations and demonstrate unimplmented functionality
+
 ## 0.1.1
 ### Added
 - dep on poirot
