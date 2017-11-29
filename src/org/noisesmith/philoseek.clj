@@ -13,5 +13,5 @@
   ([url]
    (-> url
        (x/parse)
-       (doto (p/dump "parsed-wiki-data"))
+       #_ (doto (p/dump "parsed-wiki-data"))
        (extract-link))))
