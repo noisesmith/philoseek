@@ -1,10 +1,22 @@
 (ns org.noisesmith.philoseek
   (:require [org.noisesmith.poirot :as p]
+            [clojure.string :as string]
             [clojure.xml :as x]))
 
 (defn find-tag
   [& tags]
   (filter (comp (set tags) :tag)))
+
+(def find-wiki
+  "based on a bunch of repl exploration using the dumped data, this seems
+   to be the thing that will predictably get us the right link"
+  (filter (fn [link]
+            (some-> link
+                    (:attrs)
+                    (:href)
+                    (as-> uri
+                      (and (string/starts-with? uri "/wiki/")
+                           (not (string/starts-with? uri "/wiki/Wikipedia:"))))))))
 
 (defn extract-link
   "finds the next link to follow from the body"
@@ -28,15 +40,6 @@
    [n]
     (-> (p/restore basic-dump-file)
         (->> (tree-seq coll? seq)
-             (sequence (find-tag :a)))
+             (sequence (comp (find-tag :a)
+                             find-wiki)))
         (nth n)))
-
-;; not the data we want: (explore-links 0) (explore-links 1) etc.
-
-;; probably what we want? (explore-links 4)
-
-;; why tree-seq: "I don't know much about web pages, web devs are always
-;; doing all kinds of crazy stuff, but I do know that if I randomly jumble
-;; through the data I'll probably find something with the properties that
-;; let me know it's the thing I want, tree-seq is perfect for this kind of
-;; ignorant searching"
