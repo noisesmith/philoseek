@@ -1,12 +1,12 @@
 # Change Log
 This file doubles as a walk through of a presentation.
 
-## [Unreleased]
-
+## 0.1.1
+### Added
 - dep on poirot
+- minimal implementation and passing test of raw search
 
 ## 0.1.0 - 2017-11-29
-### Added
 - Naked project
 
 [Unreleased]: https://github.com/noisesmith/philoseek/compare/0.1.1...HEAD

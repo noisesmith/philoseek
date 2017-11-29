@@ -1,7 +1,8 @@
 (ns org.noisesmith.philoseek-test
   (:require [clojure.test :refer :all]
+            [org.noisesmith.poirot :as p]
             [org.noisesmith.philoseek :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(deftest search-test
+  (testing "basic functionality"
+    (is (coll? (raw-search)))))
