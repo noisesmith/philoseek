@@ -4,24 +4,58 @@
             [org.noisesmith.poirot :as p]
             [org.noisesmith.philoseek :refer :all]))
 
-(def basic-dump-file "test/data/parsed-wiki-data.transit.json")
+(deftest find-tag-test
+  (let [finder (find-tag :a :b)]
+  (is (empty? (sequence finder [{:tag :c} {:tag :d}])))
+  (is (seq (sequence finder [{:tag :a}])))))
 
-(deftest search-test
-  (testing "basic functionality"
-    (let [extracted (extract-link (p/restore basic-dump-file))]
-      (is (string? extracted)
-          "we got the right kind of data, at least")
-      (is (string/starts-with? extracted "/wiki/")
-          "this is probably a link to another wikipedia page"))))
+(deftest not-internal-resource?-test
+  (is (not-internal-resource? "/wiki/Foo"))
+  (is (not-internal-resource? "bar"))
+  (is (not (not-internal-resource? "/wiki/Wikipedia:blah")))
+  (is (not (not-internal-resource? "/wiki/bargle(disambiguation)"))))
+
+(deftest wiki-link?-test
+  (is (wiki-link? "/wiki/foo"))
+  (is (not (wiki-link? "/foo"))))
+
+(deftest non-parenthetical-string?-test
+  (testing "we can reject parentheticals"
+    (is (non-parenthetical-string? "foo"))
+    (is (not (non-parenthetical-string? "(foo)")))
+    (is (do (non-parenthetical-string? nil)
+            :whatever))))
+
+(deftest not-parenthetical?-test
+  (is (not (not-parenthetical? nil)))
+  (is (not-parenthetical? {:attrs {:content "foo"}}))
+  (is (not (not-parenthetical? {:atters {:content "(foo)"}}))))
+
+(deftest find-wiki-test
+  (let [input nil]))
+
+(def basic-dump-file "test/data/parsed-wiki-data.transit.json")
 
 (def file-error-dump-file "./test/data/uses-file-url.transit.json")
 
-(deftest valid-url-test
-  (testing "we skip wikipedia resources and just use articles"
+#_(deftest extract-link-test
+    (testing "basic functionality"
+      (let [extracted (extract-link (p/restore basic-dump-file))]
+        (is (some? extracted)
+            "we actually get non nil data back")
+        (is (string? extracted)
+            "we got the right kind of data, at least")
+        (is (and (string? extracted)
+                 (string/starts-with? extracted "/wiki/"))
+            "this is probably a link to another wikipedia page")))
+    (testing "we skip wikipedia resources and just use articles"
     (let [extracted (extract-link (p/restore file-error-dump-file))]
+      (is (some? extracted)
+          "we actually get non nil data back")
       (is (string? extracted)
           "we got the right kind of data, at least")
-      (is (string/starts-with? extracted "/wiki/")
+      (is (and (string? extracted)
+               (string/starts-with? extracted "/wiki/"))
           "this is probably a link to another wikipedia page")
       (is (not= "/wiki/File:Question_book-new.svg" extracted)
           "we don't use this resource which is not a page")

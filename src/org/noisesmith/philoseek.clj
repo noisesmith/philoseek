@@ -9,34 +9,53 @@
 
 (defn not-internal-resource?
   [uri]
-  (every? (fn [s] (not (string/starts-with? uri s)))
-          ["/wiki/Wikipedia:"
-           "/wiki/File:"
-           "/wiki/Help:"
-           "/wiki/Talk:"]))
+  (and
+   (every? (fn [s] (not (string/starts-with? uri s)))
+           ["/wiki/Wikipedia:"
+            "/wiki/File:"
+            "/wiki/Help:"
+            "/wiki/Talk:"])
+   (not (some (fn [s] (string/ends-with? uri s))
+              ["(disambiguation)"]))))
+
+
+(defn wiki-link?
+  [uri]
+  (string/starts-with? uri "/wiki/"))
+
+(defn non-parenthetical-string?
+  [s]
+  (and (some? s)
+       (not (re-matches #"\(.*\)" s))))
+
+(defn not-parenthetical?
+  [link]
+  (some-> link
+          (get-in [:attrs :content])
+          (non-parenthetical-string?)))
 
 (def find-wiki
   "based on a bunch of repl exploration using the dumped data, this seems
    to be the thing that will predictably get us the right link"
   (filter (fn [link]
-            (some-> link
-                    (:attrs)
-                    (:href)
-                    (as-> uri
-                      (and (string/starts-with? uri "/wiki/")
-                           (not-internal-resource? uri)))))))
+            (let [uri (get-in link [:attrs :href])]
+              (and (some? uri)
+                   (wiki-link? uri)
+                   (not-internal-resource? uri)
+                   (not-parenthetical? link))))))
 
-(def debug (atom nil))
+(def debug (atom []))
 
 (defn extract-link
   "function that exists for exploring our data in the repl"
    [body]
-   (reset! debug body)
     (-> body
         (->> (tree-seq coll? seq)
              (sequence (comp (find-tag :a)
+                             (map #(swap! debug conj %))
                              find-wiki)))
-        first
+        (doall)
+        (first)
         (:attrs)
         (:href)))
 
