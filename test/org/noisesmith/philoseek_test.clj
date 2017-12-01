@@ -28,11 +28,12 @@
 
 (deftest not-parenthetical?-test
   (is (not (not-parenthetical? nil)))
-  (is (not-parenthetical? {:attrs {:content "foo"}}))
-  (is (not (not-parenthetical? {:atters {:content "(foo)"}}))))
+  (is (not-parenthetical? {:content "foo"}))
+  (is (not (not-parenthetical? {:content "(foo)"}))))
 
 (deftest find-wiki-test
-  (let [input nil]))
+  (let [input (p/restore "test/data/should-find-href.transit.json")]
+    ()))
 
 (def basic-dump-file "test/data/parsed-wiki-data.transit.json")
 
@@ -49,15 +50,15 @@
                  (string/starts-with? extracted "/wiki/"))
             "this is probably a link to another wikipedia page")))
     (testing "we skip wikipedia resources and just use articles"
-    (let [extracted (extract-link (p/restore file-error-dump-file))]
-      (is (some? extracted)
-          "we actually get non nil data back")
-      (is (string? extracted)
-          "we got the right kind of data, at least")
-      (is (and (string? extracted)
-               (string/starts-with? extracted "/wiki/"))
-          "this is probably a link to another wikipedia page")
-      (is (not= "/wiki/File:Question_book-new.svg" extracted)
-          "we don't use this resource which is not a page")
-      (is (= "/wiki/Riihim%C3%A4ki" extracted)
-          "this is probably the link we want"))))
+      (let [extracted (extract-link (p/restore file-error-dump-file))]
+        (is (some? extracted)
+            "we actually get non nil data back")
+        (is (string? extracted)
+            "we got the right kind of data, at least")
+        (is (and (string? extracted)
+                 (string/starts-with? extracted "/wiki/"))
+            "this is probably a link to another wikipedia page")
+        (is (not= "/wiki/File:Question_book-new.svg" extracted)
+            "we don't use this resource which is not a page")
+        (is (= "/wiki/Riihim%C3%A4ki" extracted)
+            "this is probably the link we want"))))

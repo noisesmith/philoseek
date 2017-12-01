@@ -31,7 +31,7 @@
 (defn not-parenthetical?
   [link]
   (some-> link
-          (get-in [:attrs :content])
+          (:content)
           (non-parenthetical-string?)))
 
 (def find-wiki
@@ -44,17 +44,13 @@
                    (not-internal-resource? uri)
                    (not-parenthetical? link))))))
 
-(def debug (atom []))
-
 (defn extract-link
   "function that exists for exploring our data in the repl"
    [body]
     (-> body
         (->> (tree-seq coll? seq)
              (sequence (comp (find-tag :a)
-                             (map #(swap! debug conj %))
                              find-wiki)))
-        (doall)
         (first)
         (:attrs)
         (:href)))
