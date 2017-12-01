@@ -31,7 +31,8 @@
   [link]
   (some-> link
           (:content)
-          (flatten)
+          (->> (tree-seq coll? seq)
+               (filter string?))
           (first)
           (non-parenthetical-string?)))
 
@@ -45,12 +46,16 @@
                    (not-internal-resource? uri)
                    (not-parenthetical? link))))))
 
+(def reject-italics
+  (map identity))
+
 (defn extract-link
   "function that exists for exploring our data in the repl"
   [body]
   (-> body
       (->> (tree-seq coll? seq)
-           (sequence (comp (find-tag :a)
+           (sequence (comp (reject-italics)
+                           (find-tag :a)
                            find-wiki)))
       (first)
       (:attrs)
