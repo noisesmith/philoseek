@@ -6,8 +6,8 @@
 
 (deftest find-tag-test
   (let [finder (find-tag :a :b)]
-  (is (empty? (sequence finder [{:tag :c} {:tag :d}])))
-  (is (seq (sequence finder [{:tag :a}])))))
+    (is (empty? (sequence finder [{:tag :c} {:tag :d}])))
+    (is (seq (sequence finder [{:tag :a}])))))
 
 (deftest not-internal-resource?-test
   (is (not-internal-resource? "/wiki/Foo"))

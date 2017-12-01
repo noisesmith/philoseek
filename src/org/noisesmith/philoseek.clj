@@ -18,7 +18,6 @@
    (not (some (fn [s] (string/ends-with? uri s))
               ["(disambiguation)"]))))
 
-
 (defn wiki-link?
   [uri]
   (string/starts-with? uri "/wiki/"))
@@ -47,14 +46,14 @@
 
 (defn extract-link
   "function that exists for exploring our data in the repl"
-   [body]
-    (-> body
-        (->> (tree-seq coll? seq)
-             (sequence (comp (find-tag :a)
-                             find-wiki)))
-        (first)
-        (:attrs)
-        (:href)))
+  [body]
+  (-> body
+      (->> (tree-seq coll? seq)
+           (sequence (comp (find-tag :a)
+                           find-wiki)))
+      (first)
+      (:attrs)
+      (:href)))
 
 (defn raw-search
   "Tries to find the Philosophy page on wikipedia in a roundabout manner."
