@@ -1,6 +1,14 @@
 # Change Log
 This file doubles as a walk through of a presentation.
 
+## 0.1.5
+### Added
+- no longer following parenthetical links
+- more extensive test coverage
+
+### Refactor
+- cleaner and more extensible implementation
+
 ## 0.1.4
 ### Fixed
 - raw-search now ignores a number of internal wikipedia resources we should not use

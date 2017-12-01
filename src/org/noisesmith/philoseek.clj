@@ -32,6 +32,7 @@
   [link]
   (some-> link
           (:content)
+          (first)
           (non-parenthetical-string?)))
 
 (def find-wiki
