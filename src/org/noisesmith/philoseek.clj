@@ -31,6 +31,7 @@
   [link]
   (some-> link
           (:content)
+          (flatten)
           (first)
           (non-parenthetical-string?)))
 
