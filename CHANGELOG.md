@@ -1,6 +1,13 @@
 # Change Log
 This file doubles as a walk through of a presentation.
 
+## 0.1.4
+### Fixed
+- raw-search now ignores a number of internal wikipedia resources we should not use
+
+### Added
+- debug atom which we can use to capture and dump data when things go wrong
+
 ## 0.1.3
 ### Fixed
 - raw-search now finds a link we can follow (for our example input)

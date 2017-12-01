@@ -1,4 +1,4 @@
-(defproject org.noisesmith/philoseek "0.1.3"
+(defproject org.noisesmith/philoseek "0.1.4"
   :description "example project for demonstrating org.noisesmith/poirot"
   :url "http://github.com/noisesmith/philoseek"
   :license {:name "Eclipse Public License"
