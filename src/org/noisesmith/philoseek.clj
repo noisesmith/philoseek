@@ -1,6 +1,7 @@
 (ns org.noisesmith.philoseek
   (:require [org.noisesmith.poirot :as p]
             [clojure.string :as string]
+            [clojure.set :as set]
             [clojure.xml :as x]))
 
 (defn find-tag
@@ -14,7 +15,9 @@
            ["/wiki/Wikipedia:"
             "/wiki/File:"
             "/wiki/Help:"
-            "/wiki/Talk:"])
+            "/wiki/Talk:"
+            "/wiki/Template:"
+            "/wiki/Category:"])
    (not (some (fn [s] (string/ends-with? uri s))
               ["(disambiguation)"]))))
 
@@ -46,26 +49,44 @@
                    (not-internal-resource? uri)
                    (not-parenthetical? link))))))
 
-(def reject-italics
-  (map identity))
+(def debug (atom []))
+
+(defn prune-italics
+  [branch]
+  (and (coll? branch)
+       (swap! debug conj branch)
+       (not (seq (set/intersection #{:style}
+                              (set (keys (:attrs branch))))))))
 
 (defn extract-link
   "function that exists for exploring our data in the repl"
   [body]
   (-> body
-      (->> (tree-seq coll? seq)
-           (sequence (comp (reject-italics)
-                           (find-tag :a)
+      (->> (tree-seq prune-italics seq)
+           (sequence (comp (find-tag :a)
                            find-wiki)))
       (first)
       (:attrs)
       (:href)))
 
+(def random-page "/wiki/Special:Random")
+
 (defn raw-search
   "Tries to find the Philosophy page on wikipedia in a roundabout manner."
-  ([] (raw-search "/wiki/Special:Random"))
+  ([] (raw-search random-page))
   ([url]
    (->> url
         (str "https://en.wikipedia.org")
         (x/parse)
         (extract-link))))
+
+(defn search
+  ([] (search random-page))
+  ([page]
+   (lazy-seq (cons page (search page #{page}))))
+  ([page seen]
+   (let [next-page (raw-search page)]
+     (when-not (contains? seen next-page)
+       (lazy-seq
+        (cons next-page
+              (search next-page (conj seen next-page))))))))
