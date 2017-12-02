@@ -39,11 +39,15 @@
           (first)
           (non-parenthetical-string?)))
 
+(defn a-href
+  [a]
+  (get-in a [:attrs :href]))
+
 (def find-wiki
   "based on a bunch of repl exploration using the dumped data, this seems
    to be the thing that will predictably get us the right link"
   (filter (fn [link]
-            (let [uri (get-in link [:attrs :href])]
+            (let [uri (a-href link)]
               (and (some? uri)
                    (wiki-link? uri)
                    (not-internal-resource? uri)
@@ -60,33 +64,36 @@
 
 (defn extract-link
   "function that exists for exploring our data in the repl"
-  [body]
+  [body exclude]
   (-> body
       (->> (tree-seq prune-italics seq)
            (sequence (comp (find-tag :a)
-                           find-wiki)))
+                           find-wiki
+                           (remove (comp exclude a-href)))))
       (first)
-      (:attrs)
-      (:href)))
+      (a-href)))
 
 (def random-page "/wiki/Special:Random")
 
 (defn raw-search
   "Tries to find the Philosophy page on wikipedia in a roundabout manner."
   ([] (raw-search random-page))
-  ([url]
-   (->> url
-        (str "https://en.wikipedia.org")
-        (x/parse)
-        (extract-link))))
+  ([url] (raw-search url #{}))
+  ([url exclude]
+   (-> url
+       (->> (str "https://en.wikipedia.org"))
+       (x/parse)
+       (extract-link exclude))))
 
 (defn search
   ([] (search random-page))
   ([page]
-   (lazy-seq (cons page (search page #{page}))))
+   (concat
+    (take-while (complement #{"/wiki/Philosophy"})
+                (cons page (search page #{page})))
+    ["/wiki/Philosophy"]))
   ([page seen]
-   (let [next-page (raw-search page)]
-     (when-not (contains? seen next-page)
-       (lazy-seq
-        (cons next-page
-              (search next-page (conj seen next-page))))))))
+   (let [next-page (raw-search page seen)]
+     (lazy-seq
+      (cons next-page
+            (search next-page (conj seen next-page)))))))
