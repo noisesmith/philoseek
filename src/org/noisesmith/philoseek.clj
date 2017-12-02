@@ -53,12 +53,9 @@
                    (not-internal-resource? uri)
                    (not-parenthetical? link))))))
 
-(def debug (atom []))
-
 (defn prune-italics
   [branch]
   (and (coll? branch)
-       (swap! debug conj branch)
        (not (seq (set/intersection #{:style}
                               (set (keys (:attrs branch))))))))
 
