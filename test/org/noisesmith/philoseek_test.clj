@@ -41,7 +41,7 @@
 
 (deftest extract-link-test
   (testing "basic functionality"
-    (let [extracted (extract-link (p/restore basic-dump-file))]
+    (let [extracted (extract-link (p/restore basic-dump-file) #{})]
       (is (some? extracted)
           "we actually get non nil data back")
       (is (string? extracted)
@@ -50,7 +50,7 @@
                (string/starts-with? extracted "/wiki/"))
           "this is probably a link to another wikipedia page")))
   (testing "we skip wikipedia resources and just use articles"
-    (let [extracted (extract-link (p/restore file-error-dump-file))]
+    (let [extracted (extract-link (p/restore file-error-dump-file) #{})]
       (is (some? extracted)
           "we actually get non nil data back")
       (is (string? extracted)
