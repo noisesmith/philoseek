@@ -88,12 +88,10 @@
 (defn search
   ([] (search random-page))
   ([page]
-   (concat
-    (take-while (complement #{"/wiki/Philosophy"})
-                (cons page (search page #{page})))
-    ["/wiki/Philosophy"]))
+   (take-while identity (cons page (search page #{page}))))
   ([page seen]
-   (let [next-page (raw-search page seen)]
-     (lazy-seq
-      (cons next-page
-            (search next-page (conj seen next-page)))))))
+   (when-not (contains? seen "/wiki/Philosophy")
+     (let [next-page (raw-search page seen)]
+       (lazy-seq
+        (cons next-page
+              (search next-page (conj seen next-page))))))))
