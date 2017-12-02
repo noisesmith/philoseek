@@ -57,7 +57,7 @@
   [branch]
   (and (coll? branch)
        (not (seq (set/intersection #{:style}
-                              (set (keys (:attrs branch))))))))
+                                   (set (keys (:attrs branch))))))))
 
 (defn extract-link
   "function that exists for exploring our data in the repl"
