@@ -1,0 +1,87 @@
+philoseek
+
+A Clojure library designed to act as an example for usage of noisesmith/poirot
+
+Usage
+    the tags of this repo will describe the steps in walking through using poirot
+    to debug and develop a library that talks to data from the real world
+
+    I'll be using git commands and a repl in a terminal, and scrolling through
+    code and this outline using vim. I appreciate your indulging my odd
+    presentation format.
+
+Overview
+    poirot is named after a detective
+        it is designed to help you debug problems where your data is
+        underspecified, or maybe you don't have control of the exact structure
+    poirot is meant to help write tests
+        you can use poirot to capture data in the repl or a running program,
+        and then use that data in a unit test
+    repl demo
+        we can use poirot to store various data types
+    this project
+        it plays a silly game
+
+Repl Demo
+    basic usage
+        basic data can be serialized and deserialized to the file system
+        this works in clojure and cljs
+    some more minutae
+        file names are auto-generated if not specified
+        it works on some types that you might not expect
+        it can be extended to support more types using an optional argument
+
+This project
+    the wikipedia philosophy game
+        the goal is to find the philosophy page in wikipedia by crawling links
+        this provides an opportunity to use weirdly structured data with
+        special cases that we can't control
+    basic approach
+        with the help of clojure.xml we can get a tree of clojure data from a
+        url, combining this with some built in clojure data processing
+        functions we can make a small program that plays the wikipedia
+        philosophy game
+    aside: tree-seq
+        tree-seq is well suited to this sort of problem because it lets us say
+        that we don't know exactly where (repl demo of tree-seq)
+
+Tags:
+    step0
+        minimal steup of a leiningen library template using poirot
+    step1
+        restructure of the code to make it more testable
+        adjusted test expectations
+    step2
+        the i/o code is modified to dump the data for testing
+        a test data file has been checked into the repo
+        we pull in the test file in the unit test instead of doing network i/o
+    step3
+        disabling the dumping of new data in the io function
+        fixing the unit test and abstracting the file name from the test code
+    step4
+        some preliminary code to help find our target data
+        a helper function to use in the repl to explore the data
+    step5
+        more elaboration on the code for finding the data we need
+        using an atom to capture runtime data so we can explore it and store
+        for later
+        more dumped data to run tests against, capturing a specific regression
+        we didn't see with the previous test data
+        more unit tests
+    step6
+        more data capture from the repl execution
+        some simple tests to narrow down a regression that came up in refactoring
+        temporarily commented out the main tests to focus on simple test cases
+    step7
+       more dumped data
+       adjusting our test expectations to reflect the dumped data properly
+    step8
+       regressions have been addressed
+       parenthetical links are being ignored
+       minimal test case that exposes the data shape based regression we had
+    step9
+       a proper recursive walk of the urls
+       ignoring pages we've already seen
+       test data for our next big task: trying to ignore italicized text
+       change to the extract-link and search functions (now using a set to
+       track previously seen hrefs)
